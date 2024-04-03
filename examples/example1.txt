@@ -1,5 +1,5 @@
 math(
-    expression(
-        3x+2
+    equation(
+        x=pow(x,2)
     )
 )
