@@ -1,0 +1,5 @@
+math(
+    expression(
+        3x+2
+    )
+)
