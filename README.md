@@ -1,4 +1,4 @@
-# Mini-C
+# Math2Tex
 
 ## Global structure
 

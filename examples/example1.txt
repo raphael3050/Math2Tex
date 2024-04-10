@@ -1,5 +1,5 @@
-math(
-    equation(
-        x=pow(x,2)
-    )
-)
+math{
+    equation{
+        f(x)=2
+    }
+}

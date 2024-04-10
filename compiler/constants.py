@@ -68,13 +68,16 @@ LEXEM_REGEXES = [
     (r"\bsqrt\b", "FUNC_SQRT"),
     (r"\btan\b", "FUNC_TAN"),
 
+    #(r"[a-zA-Z]\([^)]*\)", "FUNC_CUSTOM"),
+
+
 
     # Literals
     (r"[0-9]+\.[0-9]+", "LIT_FLOAT"),
     (r"[0-9]+", "LIT_INT"),
     (r"\'[a-zA-Z0-9]+\'", "LIT_CHAR"),
-    (r"\"[a-zA-Z0-9]+\"", "LIT_CHAR"),
     
     # Identifiers
-    (r"[a-zA-Z_][a-zA-Z0-9_]*", "IDENTIFIER")
+    #(r"[a-zA-Z_][a-zA-Z0-9_]*", "IDENTIFIER"),
+    (r"[a-zA-Z_]*", "IDENTIFIER")
 ]
