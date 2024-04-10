@@ -24,11 +24,9 @@ class Expression(astNode):
         self.statements : List[Statement] = statements
 
 class Function(astNode):
-    def __init__(self, litteral, parenth, op, expression):
+    def __init__(self, litteral, parenth):
         self.litteral : Litteral = litteral
         self.parenth : Parenth = parenth
-        self.op = op
-        self.expression : Expression = expression
 
 class Parenth(astNode):
     def __init__(self, litteral):
