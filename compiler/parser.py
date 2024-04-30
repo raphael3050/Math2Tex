@@ -107,33 +107,45 @@ class Parser:
     def parse_expression(self):
         function = None
         statements = []
-        if self.show_next().tag == "IDENTIFIER":
+        op = []
+        if self.show_next().tag == "IDENTIFIER" and self.show_next(n=2).tag == "L_PAREN":
             function = self.parse_function()
         else:
-            # TODO : itération en trop
-            while (self.show_next().tag != "R_CURL_BRACKET") and (self.show_next().tag != "OP_EQUAL"):
+            while (self.show_next().tag != "R_CURL_BRACKET") and (self.show_next().tag != "EQUOP_EQUAL") and (self.show_next().tag != "R_PAREN"):
+                if self.show_next().tag in ["OP_PLUS", "OP_MINUS", "OP_MULT"]:
+                    op.append(self.parse_op())
                 statements.append(self.parse_statement())
-        return Expression(function, statements)
+        return Expression(function, statements, op)
 
     def parse_function(self):
         litteral = self.expect("IDENTIFIER")
         parenth = self.parse_parenth()
         return Function(litteral, parenth)
 
-    def parse_parenth(self):
-        left_parenth = self.expect("L_PAREN")
-        # TODO : ambiguité entre LIT_CHAR et IDENTIFIER
-        if self.show_next().tag == "LIT_CHAR":
-            litteral = self.expect("LIT_CHAR")
-        elif self.show_next().tag == "IDENTIFIER":
-            litteral = self.expect("IDENTIFIER")
-        right_parenth = self.expect("R_PAREN")
-        return Parenth(litteral)
+
 
     def parse_statement(self):
-        term = self.parse_term()
-        return Statement(term)
-
+        parenth = None
+        term = None
+        if self.show_next().tag == "L_PAREN":
+            parenth = self.parse_parenth()
+        else:
+            term = self.parse_term()
+        return Statement(parenth, term)
+        
+    def parse_parenth(self):
+        left_parenth = self.expect("L_PAREN")
+        expression = []
+        while(self.show_next().tag != "R_PAREN"):
+            expression.append(self.parse_expression())
+            # TODO : ambiguité entre LIT_CHAR et IDENTIFIER
+            """             if self.show_next().tag == "LIT_CHAR":
+                litteral = self.expect("LIT_CHAR")
+            elif self.show_next().tag == "IDENTIFIER":
+                litteral = self.expect("IDENTIFIER") """
+        right_parenth = self.expect("R_PAREN")
+        return Parenth(expression)        
+    
     def parse_term(self):
         term = None
         if self.show_next().tag == "LIT_INT":
@@ -143,3 +155,11 @@ class Parser:
         elif self.show_next().tag == "IDENTIFIER":
             term = self.expect("IDENTIFIER")
         return Term(term)
+    
+    def parse_op(self):
+        if self.show_next().tag == "OP_PLUS":
+            return self.expect("OP_PLUS")
+        elif self.show_next().tag == "OP_MINUS":
+            return self.expect("OP_MINUS")
+        elif self.show_next().tag == "OP_MULT":
+            return self.expect("OP_MULT")

@@ -45,6 +45,7 @@ LEXEM_REGEXES = [
     (r"\>", "OP_GREATER"),
     (r"\<", "OP_LESS"),
     
+    
     # Equality operators
     (r"=", "EQUOP_EQUAL"),
     (r"\!\=", "EQUOP_NOT_EQUAL"),
@@ -68,9 +69,8 @@ LEXEM_REGEXES = [
     (r"\bsqrt\b", "FUNC_SQRT"),
     (r"\btan\b", "FUNC_TAN"),
 
+    ##(r"[a-zA-Z]\([^)]*\)", "FUNC_CUSTOM"),
     #(r"[a-zA-Z]\([^)]*\)", "FUNC_CUSTOM"),
-
-
 
     # Literals
     (r"[0-9]+\.[0-9]+", "LIT_FLOAT"),
