@@ -105,16 +105,18 @@ class Parser:
             return self.expect("OP_LESS_EQUAL")
 
     def parse_expression(self):
-        function = None
+        function = []
         statements = []
         op = []
-        if self.show_next().tag == "IDENTIFIER" and self.show_next(n=2).tag == "L_PAREN":
-            function = self.parse_function()
-        else:
-            while (self.show_next().tag != "R_CURL_BRACKET") and (self.show_next().tag != "EQUOP_EQUAL") and (self.show_next().tag != "R_PAREN"):
-                if self.show_next().tag in ["OP_PLUS", "OP_MINUS", "OP_MULT"]:
-                    op.append(self.parse_op())
-                statements.append(self.parse_statement())
+        #if self.show_next().tag == "IDENTIFIER" and self.show_next(n=2).tag == "L_PAREN":
+        #    function = self.parse_function()
+        #else:
+        while (self.show_next().tag != "R_CURL_BRACKET") and (self.show_next().tag != "EQUOP_EQUAL") and (self.show_next().tag != "R_PAREN"):
+            if self.show_next().tag == "IDENTIFIER" and self.show_next(n=2).tag == "L_PAREN":
+                function.append(self.parse_function())
+            elif self.show_next().tag in ["OP_PLUS", "OP_MINUS", "OP_MULT"]:
+                op.append(self.parse_op())
+            statements.append(self.parse_statement())
         return Expression(function, statements, op)
 
     def parse_function(self):
@@ -148,12 +150,17 @@ class Parser:
     
     def parse_term(self):
         term = None
-        if self.show_next().tag == "LIT_INT":
+        next_tag = self.show_next().tag
+        if next_tag == "LIT_INT":
             term = self.expect("LIT_INT")
-        elif self.show_next().tag == "LIT_FLOAT":
+        elif next_tag == "LIT_FLOAT":
             term = self.expect("LIT_FLOAT")
-        elif self.show_next().tag == "IDENTIFIER":
+        elif next_tag == "IDENTIFIER":
             term = self.expect("IDENTIFIER")
+        elif next_tag == "LIT_CHAR":
+            term = self.expect("LIT_CHAR")
+        elif next_tag == "GREEK_LETTER":
+            term = self.expect("GREEK_LETTER")
         return Term(term)
     
     def parse_op(self):

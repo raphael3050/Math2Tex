@@ -49,7 +49,7 @@ class Lexer:
             contents = input_file.readlines()
         return self.lex(contents)
 
-    def lex(self, input):
+    def lex(self, input : list):
         """
         Creates a lexem for every matched regular expression.
         Crawls through the input (list of lines).
@@ -60,6 +60,7 @@ class Lexer:
                 line_nb + 1
             )  # Python starts at 0, we need to start at 1
             line = line.strip()
+            line = line.replace(" ", "")
             try:
                 self.match_line(line)
             except LexerException as err:

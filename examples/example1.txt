@@ -1,5 +1,5 @@
 math{
     equation{
-        f(x)=(2+1)*(14+(2-3))
+        g(x) = sin(x) + cos(2x)
     }
 }
