@@ -87,9 +87,9 @@ class Parser:
         if self.show_next().tag == "KW_EQUATION":
             while self.show_next().tag != "R_CURL_BRACKET":
                 equations.append(self.parse_equation())
-        # elif self.show_next().tag == "KW_EQUATION":
-        # while self.show_next().tag != "R_CURL_BRACKET":
-        # expressions.append(self.parse_expression())
+        else:
+            while self.show_next().tag != "R_CURL_BRACKET":
+                expressions.append(self.parse_expression())
         self.expect("R_CURL_BRACKET")
         return Math(equations, expressions)
 
@@ -103,8 +103,6 @@ class Parser:
         return Equation(expression_1, compop, expression_2)
 
     def parse_compop(self):
-        if self.show_next().tag == "EQUOP_EQUAL":
-            return self.expect("EQUOP_EQUAL")
         if self.show_next().tag == "OP_GREATER":
             return self.expect("OP_GREATER")
         elif self.show_next().tag == "OP_LESS":
@@ -113,6 +111,8 @@ class Parser:
             return self.expect("OP_GREATER_EQUAL")
         elif self.show_next().tag == "OP_LESS_EQUAL":
             return self.expect("OP_LESS_EQUAL")
+        # Cas par défaut
+        return self.expect("EQUOP_EQUAL")
 
     def parse_expression(self):
         statements = []
@@ -121,6 +121,7 @@ class Parser:
             (self.show_next().tag != "R_CURL_BRACKET")
             and (self.show_next().tag != "EQUOP_EQUAL")
             and (self.show_next().tag != "R_PAREN")
+            and (self.show_next().tag != "COMMA")
         ):
             if self.show_next().tag in ["OP_PLUS", "OP_MINUS", "OP_MULT"]:
                 op.append(self.parse_op())
@@ -131,8 +132,7 @@ class Parser:
         litteral = self.parse_term()
         parenth = self.parse_parenth()
         return Function(litteral, parenth)
-    
-    
+
     def parse_statement(self):
         parenth = None
         term = None
@@ -151,10 +151,13 @@ class Parser:
     def parse_parenth(self):
         left_parenth = self.expect("L_PAREN")
         expression = []
+        commas = []
         while self.show_next().tag != "R_PAREN":
             expression.append(self.parse_expression())
+            if self.show_next().tag == "COMMA":
+                commas.append(self.expect("COMMA"))
         right_parenth = self.expect("R_PAREN")
-        return Parenth(expression, left_parenth, right_parenth)
+        return Parenth(expression, left_parenth, right_parenth, commas)
 
     def parse_term(self):
         term = None

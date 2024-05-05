@@ -33,10 +33,11 @@ class Function(astNode):
 
 
 class Parenth(astNode):
-    def __init__(self, expression, left_parenth, right_parenth):
+    def __init__(self, expression, left_parenth, right_parenth, commas):
         self.expressions: List[Expression] = expression
-        self.left_parenth = left_parenth
-        self.right_parenth = right_parenth
+        self.left_parenth : str = left_parenth
+        self.right_parenth : str= right_parenth
+        self.commas : list[str] = commas
 
 
 class Statement(astNode):

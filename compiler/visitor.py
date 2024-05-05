@@ -2,6 +2,9 @@
 from compiler.abstract_syntax_tree import (
     Math,
 )
+from compiler.constants import (
+    LATEX_FUNCTIONS,
+)
 
 
 class LatexGeneratorVisitor():
@@ -31,7 +34,9 @@ class LatexGeneratorVisitor():
                 self.text.append(self.indent*self.tab +"\\end{equation}\n")
         if math.expressions is not None:
             for expression in math.expressions:
+                self.text.append(self.indent*self.tab)
                 self.visit(expression)
+                self.text.append("\n")
         self.text.append("\\end{math}\n")
 
     def visitEquation(self, equation, args):
@@ -57,17 +62,22 @@ class LatexGeneratorVisitor():
 
     def visitParenth(self, parenth, args):
         self.text.append("(")
-        for expression in parenth.expressions:
+        for i, expression in enumerate(parenth.expressions):
             self.visit(expression)
+            if i < len(parenth.commas):
+                self.text.append(f"{parenth.commas[i].value}")
         self.text.append(")")
 
     def visitTerm(self, term, args):
-        self.text.append(term.term.value)
+        if term.term.value in LATEX_FUNCTIONS:
+            self.text.append('\\'+term.term.value)
+        elif term.term.tag == "GREEK_LETTER":
+            self.text.append('\\'+term.term.value.lower())
+        else:
+            self.text.append(term.term.value)
     
     def visitFunction(self, function, args):
         self.visit(function.litteral)
         self.visit(function.parenth)
     
         
-    def visitLitteral(self, litteral, args):
-        self.text.append(litteral.value)
