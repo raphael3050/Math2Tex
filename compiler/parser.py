@@ -1,12 +1,22 @@
 # -*- encoding: utf-8 -*-
 
 import logging
-from compiler.abstract_syntax_tree import *
+from compiler.abstract_syntax_tree import (
+    Math,
+    Equation,
+    Expression,
+    Function,
+    Statement,
+    Parenth,
+    Term,
+)
 
 logger = logging.getLogger(__name__)
 
+
 class ParsingException(Exception):
     pass
+
 
 class Parser:
     def __init__(self, lexems):
@@ -66,9 +76,9 @@ class Parser:
             print("Parsing successful!")
         except ParsingException as err:
             logger.exception(err)
-            raise 
+            raise
         return math
-        
+
     def parse_math(self):
         equations = []
         expressions = []
@@ -77,9 +87,9 @@ class Parser:
         if self.show_next().tag == "KW_EQUATION":
             while self.show_next().tag != "R_CURL_BRACKET":
                 equations.append(self.parse_equation())
-        #elif self.show_next().tag == "KW_EQUATION":
-            #while self.show_next().tag != "R_CURL_BRACKET":
-                #expressions.append(self.parse_expression())
+        # elif self.show_next().tag == "KW_EQUATION":
+        # while self.show_next().tag != "R_CURL_BRACKET":
+        # expressions.append(self.parse_expression())
         self.expect("R_CURL_BRACKET")
         return Math(equations, expressions)
 
@@ -93,61 +103,59 @@ class Parser:
         return Equation(expression_1, compop, expression_2)
 
     def parse_compop(self):
-        if(self.show_next().tag == "EQUOP_EQUAL"):
+        if self.show_next().tag == "EQUOP_EQUAL":
             return self.expect("EQUOP_EQUAL")
-        if(self.show_next().tag == "OP_GREATER"):
+        if self.show_next().tag == "OP_GREATER":
             return self.expect("OP_GREATER")
-        elif(self.show_next().tag == "OP_LESS"):
+        elif self.show_next().tag == "OP_LESS":
             return self.expect("OP_LESS")
-        elif(self.show_next().tag == "OP_GREATER_EQUAL"):
+        elif self.show_next().tag == "OP_GREATER_EQUAL":
             return self.expect("OP_GREATER_EQUAL")
-        elif(self.show_next().tag == "OP_LESS_EQUAL"):
+        elif self.show_next().tag == "OP_LESS_EQUAL":
             return self.expect("OP_LESS_EQUAL")
 
     def parse_expression(self):
-        function = []
         statements = []
         op = []
-        #if self.show_next().tag == "IDENTIFIER" and self.show_next(n=2).tag == "L_PAREN":
-        #    function = self.parse_function()
-        #else:
-        while (self.show_next().tag != "R_CURL_BRACKET") and (self.show_next().tag != "EQUOP_EQUAL") and (self.show_next().tag != "R_PAREN"):
-            if self.show_next().tag == "IDENTIFIER" and self.show_next(n=2).tag == "L_PAREN":
-                function.append(self.parse_function())
-            elif self.show_next().tag in ["OP_PLUS", "OP_MINUS", "OP_MULT"]:
+        while (
+            (self.show_next().tag != "R_CURL_BRACKET")
+            and (self.show_next().tag != "EQUOP_EQUAL")
+            and (self.show_next().tag != "R_PAREN")
+        ):
+            if self.show_next().tag in ["OP_PLUS", "OP_MINUS", "OP_MULT"]:
                 op.append(self.parse_op())
             statements.append(self.parse_statement())
-        return Expression(function, statements, op)
+        return Expression(statements, op)
 
     def parse_function(self):
-        litteral = self.expect("IDENTIFIER")
+        litteral = self.parse_term()
         parenth = self.parse_parenth()
         return Function(litteral, parenth)
-
-
-
+    
+    
     def parse_statement(self):
         parenth = None
         term = None
+        function = None
         if self.show_next().tag == "L_PAREN":
             parenth = self.parse_parenth()
+        elif (
+            self.show_next().tag == "IDENTIFIER"
+            and self.show_next(n=2).tag == "L_PAREN"
+        ):
+            function = self.parse_function()
         else:
             term = self.parse_term()
-        return Statement(parenth, term)
-        
+        return Statement(parenth, term, function)
+
     def parse_parenth(self):
         left_parenth = self.expect("L_PAREN")
         expression = []
-        while(self.show_next().tag != "R_PAREN"):
+        while self.show_next().tag != "R_PAREN":
             expression.append(self.parse_expression())
-            # TODO : ambiguité entre LIT_CHAR et IDENTIFIER
-            """             if self.show_next().tag == "LIT_CHAR":
-                litteral = self.expect("LIT_CHAR")
-            elif self.show_next().tag == "IDENTIFIER":
-                litteral = self.expect("IDENTIFIER") """
         right_parenth = self.expect("R_PAREN")
-        return Parenth(expression)        
-    
+        return Parenth(expression, left_parenth, right_parenth)
+
     def parse_term(self):
         term = None
         next_tag = self.show_next().tag
@@ -162,7 +170,7 @@ class Parser:
         elif next_tag == "GREEK_LETTER":
             term = self.expect("GREEK_LETTER")
         return Term(term)
-    
+
     def parse_op(self):
         if self.show_next().tag == "OP_PLUS":
             return self.expect("OP_PLUS")
