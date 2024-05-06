@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import re
-from compiler.constants import LEXEM_REGEXES
+from mathtotex.constants import LEXEM_REGEXES
 
 import logging
 
@@ -66,6 +66,7 @@ class Lexer:
             except LexerException as err:
                 logger.exception(err)
                 raise
+        print("# Lexing done! ✅") 
         return self.lexems
 
     def match_line(self, line):

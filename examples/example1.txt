@@ -1,3 +1,5 @@
 math{
-    sum(x, 2)
+    equation{
+        int(a, b, pow(x, 2+ALPHA), dx) = x+5
+    }
 }

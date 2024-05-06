@@ -1,3 +1,6 @@
+# ==================================================
+# Fichiers de constantes pour le lexer et le parser.
+# ==================================================
 LEXEM_REGEXES = [
     # Special characters
     (r"\(", "L_PAREN"),
@@ -8,15 +11,17 @@ LEXEM_REGEXES = [
     (r"\]", "R_SQUARE_BRACKET"),
     (r";", "SEMICOLON"),
     (r",", "COMMA"),
+    (r":", "COLON"),
     # Greek letters
     (
-        r"ALPHA|BETA|GAMMA|DELTA|EPSILON|ZETA|SIGMA|THETA|OMEGA|PHI|TAU|MU|DELTA|CHI|KAPPA",
+        r"ALPHA|BETA|GAMMA|DELTA|EPSILON|ZETA|SIGMA|THETA|OMEGA|PHI|TAU|MU|CHI|KAPPA",
         "GREEK_LETTER",
     ),
     # Keywords
     (r"\bmath\b", "KW_MATH"),
     (r"\bequation\b", "KW_EQUATION"),
     (r"\bexpression\b", "KW_EXPRESSION"),
+
     # Operators
     (r"\+", "OP_PLUS"),
     (r"\-", "OP_MINUS"),
@@ -27,6 +32,7 @@ LEXEM_REGEXES = [
     (r"\<\=", "OP_LESS_EQUAL"),
     (r"\>", "OP_GREATER"),
     (r"\<", "OP_LESS"),
+
     # Equality operators
     (r"=", "EQUOP_EQUAL"),
     (r"\!\=", "EQUOP_NOT_EQUAL"),
@@ -56,4 +62,13 @@ LATEX_FUNCTIONS = [
     "sin",
     "sqrt",
     "tan",
+    "sum",
+    "int",
+]
+
+# Fonctions particulières en LaTeX, elles doivent être traitées différemment par le visiteur.
+LATEX_UTILS_FUNCTIONS = [
+    "sum",
+    "int",
+    "pow",
 ]

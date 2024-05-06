@@ -1,55 +1,57 @@
 # Math2Tex
 
-## Global structure
+Ce projet de compilation a pour but de simplifier la rédaction d'expressions mathématiques Latex en fournissant un outil de conversion d'expressions mathématiques écrites en langage dit 'simplifié' en code Latex. La syntaxe simplifiée s'inspire de la syntaxe des expressions mathématiques en Python, avec peut de caractères spéciaux et une syntaxe claire et concise.
 
-The project is structured in three main folders:
-- `compiler` that contains the source file of our compilation project
-- `tests` that contains the different tests of our elements (more below)
-- `examples` that contains test inputs for our elements
+La description du projet ainsi que la grammaire du langage simplifié sont détaillées dans le document `Compilation_Math2Tex.pdf`.
 
-Surrounding those directories, several files are present as well:
-- `Pipfile` and `Pipfile.lock` are available if you use [`pipenv`](https://pipenv.pypa.io/en/latest/), otherwise ignore them and look into the requirements
-- `requirements.txt` contains the requirements of the project
-- `README.md` this file, hello :)
+## Important
 
-## Installation
+Ce projet n'inclus pas la syntaxe mathématique complète de Latex, mais seulement les composants les plus couramment utilisés. Il est donc possible que certaines expressions mathématiques ne puissent pas être compilées correctement.
 
-The project can be installed with `pip` in editable mode (this will make the tests work):
+## Utilisation
+
+La première étape avant de pouvoir utiliser le compilateur est d'installer les différentes dépendances nécessaires. Pour cela, il suffit de lancer la commande suivante :
+
 ```bash
-$ pip install -e . -r requirements.txt
+pip install -r requirements.txt
 ```
 
-It can then be launched with:
-```python
-$ python -m compiler examples/example1.c
+Ensuite, il suffit de lancer le compilateur en lui passant en argument le chemin du fichier contenant l'expression mathématique à compiler. Par exemple :
+
+```bash
+python3 -m mathtotex examples/example1.txt
 ```
 
-## Code structure
+Le code Latex généré sera alors affiché dans la console.
 
-The code is structured in the following files:
-- `constants.py`: The different constants of the project (*i.e.* regex patterns, raw-coded values, etc.)
-- `lexer.py`: The lexer that transforms raw text input into lexems
-- `p4rser.py`: The parser that performs the syntaxical analysis
-    > Note: The file is named this way to avoid a conflict with the base python `parser` module!
-- `__main__.py`: This file holds the main script that is executed when using `python -m <module_name>`
+## Exemples
 
-## Testing the project
+Voici quelques exemples d'expressions mathématiques écrites en code Latex et leur équivalent en code simplifié :
 
-We provide two complete tests that run the whole lexing and parsing processes. They can be found in the `tests` directory under `test_lexer.py` and `test_parser.py` respectively.
-
-You can run the whole test suite (of 2 tests) using:
-```python
-$ pytest
+##### Puissance
+```latex
+2^{x+3}
+```
+```bash
+pow(2, x+3)
 ```
 
-For now, the tests are basic but we are missing many important lexing features, you are encouraged to add them yourself!
-
-> Note: The `@pytest.mark.parametrize`  decorator will run one test for each element of the supplied list. This way, we can run the test on multiple files using:
-
-```python
-@pytest.mark.parametrize
-@pytest.mark.parametrize("arg", ["val1", "val2", "val3"])
-def test_with_args(arg):
-    # Your test here can use the arg variable!
-    ...
+##### Somme
+```latex
+\sum_{i=0}^{n} 2n
 ```
+```bash
+sum(i:0, n, 2n)
+```
+
+##### Intégrale
+```latex
+\int_{a}^{b}{x^2} dx
+```
+```bash
+int(a, b, pow(x, 2), dx)
+```
+
+
+<object data="/examples/ast_example.pdf" type="application/pdf" width="100%"> 
+</object>

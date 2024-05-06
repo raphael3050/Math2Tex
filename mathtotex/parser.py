@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import logging
-from compiler.abstract_syntax_tree import (
+from mathtotex.abstract_syntax_tree import (
     Math,
     Equation,
     Expression,
@@ -123,9 +123,10 @@ class Parser:
             and (self.show_next().tag != "R_PAREN")
             and (self.show_next().tag != "COMMA")
         ):
-            if self.show_next().tag in ["OP_PLUS", "OP_MINUS", "OP_MULT"]:
+            if self.show_next().tag in ["OP_PLUS", "OP_MINUS", "OP_MULT", "COLON"]:
                 op.append(self.parse_op())
             statements.append(self.parse_statement())
+        
         return Expression(statements, op)
 
     def parse_function(self):
@@ -181,3 +182,5 @@ class Parser:
             return self.expect("OP_MINUS")
         elif self.show_next().tag == "OP_MULT":
             return self.expect("OP_MULT")
+        elif self.show_next().tag == "COLON":
+            return self.expect("COLON")
